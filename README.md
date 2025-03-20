@@ -1,208 +1,197 @@
-# ADB (Android Debug Bridge) - Most Useful Commands
+# ADB (Android Debug Bridge) Commands Cheat Sheet
 
-ADB (Android Debug Bridge) is a command-line tool that allows developers, testers, and normal users to interact with Android devices. Below is a list of the most commonly used and useful ADB commands.
+ADB (Android Debug Bridge) is a powerful tool that allows developers, testers, and even normal users to interact with Android devices via a command-line interface.
 
-## 📌 **Setup ADB**
+## 🔍 Search for a Command
+To quickly find a command, use `Ctrl + F` (Windows/Linux) or `Cmd + F` (Mac) and type the keyword.
 
-1. Enable **Developer Options** on your Android device.
-2. Enable **USB Debugging** in Developer Options.
-3. Install ADB on your PC:
-   - **Windows**: Install ADB from [Android SDK Platform Tools](https://developer.android.com/studio/releases/platform-tools)
-   - **macOS/Linux**: Use Homebrew: `brew install android-platform-tools`
-4. Connect your device via USB and verify with:
-   ```sh
-   adb devices
-   ```
-   If prompted, allow USB debugging on your device.
+## 📌 Basic ADB Commands
 
----
-
-## 🔍 **Basic ADB Commands**
-
-### 1️⃣ **Check Connected Devices**
+### 1. Check Device Connection
 ```sh
 adb devices
 ```
-🔹 Lists all connected devices with ADB access.
+*Lists all connected devices.*
 
-### 2️⃣ **Restart ADB Server**
+### 2. Restart ADB Server
 ```sh
 adb kill-server
 adb start-server
 ```
-🔹 Restarts the ADB server in case of issues.
+*Kills and restarts the ADB server.*
 
-### 3️⃣ **Reboot Device**
+### 3. Connect to a Device Over Wi-Fi
 ```sh
-adb reboot
+adb tcpip 5555
+adb connect <device-ip>:5555
 ```
-🔹 Restarts the device normally.
+*Connects to a device wirelessly.*
 
+### 4. Install/Uninstall an App
 ```sh
-adb reboot recovery
+adb install <apk-file-path>
+adb uninstall <package-name>
 ```
-🔹 Boots into recovery mode.
+*Installs or uninstalls an APK.*
 
-```sh
-adb reboot bootloader
-```
-🔹 Boots into fastboot mode.
+## 📸 Screenshots & Screen Recording
 
----
-
-## 📸 **Take Screenshots & Record Screen**
-
-### 4️⃣ **Take a Screenshot**
+### 5. Take a Screenshot
 ```sh
 adb shell screencap -p /sdcard/screenshot.png
 adb pull /sdcard/screenshot.png
 ```
-🔹 Takes a screenshot and saves it on your PC.
+*Takes a screenshot and transfers it to the PC.*
 
-### 5️⃣ **Record Screen**
+### 6. Record Screen
 ```sh
-adb shell screenrecord /sdcard/record.mp4
-adb pull /sdcard/record.mp4
+adb shell screenrecord /sdcard/screen.mp4
+adb pull /sdcard/screen.mp4
 ```
-🔹 Records the screen (Ctrl+C to stop).
+*Records the screen and saves it to the device.*
 
----
+## 📂 File Management
 
-## 📂 **File Management**
-
-### 6️⃣ **Push File to Device**
+### 7. Push/Pull Files
 ```sh
-adb push file.txt /sdcard/
+adb push <local-file> <device-path>
+adb pull <device-file> <local-path>
 ```
-🔹 Sends a file from PC to Android.
+*Transfers files between the PC and the device.*
 
-### 7️⃣ **Pull File from Device to PC**
-```sh
-adb pull /sdcard/file.txt
-```
-🔹 Retrieves a file from Android to PC.
+## 🛠 Debugging & System Commands
 
-### 8️⃣ **Delete File on Device**
-```sh
-adb shell rm /sdcard/file.txt
-```
-🔹 Deletes a file from the Android device.
-
----
-
-## 📱 **App Management**
-
-### 9️⃣ **Install an APK**
-```sh
-adb install app.apk
-```
-🔹 Installs an APK file.
-
-### 🔟 **Uninstall an App**
-```sh
-adb uninstall com.example.app
-```
-🔹 Uninstalls an app (use `-k` to keep data).
-
-### 1️⃣1️⃣ **Extract Installed APK**
-```sh
-adb shell pm path com.example.app
-adb pull /data/app/com.example.app-1/base.apk
-```
-🔹 Gets the APK file of an installed app.
-
----
-
-## 🛠 **Debugging & System Info**
-
-### 1️⃣2️⃣ **View Device Log (Live)**
+### 8. View Logcat (Real-time Logs)
 ```sh
 adb logcat
+adb logcat -s "TAG"
 ```
-🔹 Streams live system logs.
+*Shows system logs for debugging.*
 
-### 1️⃣3️⃣ **Check Device Info**
+### 9. Dump Device Info
 ```sh
-adb shell getprop
+adb shell dumpsys
 ```
-🔹 Displays all system properties.
+*Retrieves detailed system information.*
 
-### 1️⃣4️⃣ **Battery & Network Info**
+### 10. Get Specific Device Data (Useful for Testing)
 ```sh
+adb shell dumpsys activity
 adb shell dumpsys battery
+adb shell dumpsys window
 adb shell dumpsys wifi
+adb shell dumpsys package <package-name>
 ```
-🔹 Shows battery and network details.
+*Dumps specific data like battery status, running activities, Wi-Fi state, and more.*
 
----
-
-## 🔐 **Control Device & Security**
-
-### 1️⃣5️⃣ **Grant App Permissions**
+### 11. Get Call Logs (For Testing)
 ```sh
-adb shell pm grant com.example.app android.permission.CAMERA
+adb shell content query --uri content://call_log/calls
 ```
-🔹 Grants a permission manually.
+*Retrieves recent call logs from the device.*
 
-### 1️⃣6️⃣ **Revoke App Permissions**
+## 📲 App & UI Navigation
+
+### 12. Launch an App Directly
 ```sh
-adb shell pm revoke com.example.app android.permission.CAMERA
+adb shell monkey -p <package-name> -c android.intent.category.LAUNCHER 1
 ```
-🔹 Revokes a permission.
+*Opens a specific app.*
 
-### 1️⃣7️⃣ **Factory Reset Device**
+### 13. Open a Specific Screen of an App
+```sh
+adb shell am start -n <package-name>/<activity-name>
+```
+*Directly navigates to a particular activity in an app.*
+
+### 14. Force Stop an App
+```sh
+adb shell am force-stop <package-name>
+```
+*Forces an app to stop running.*
+
+### 15. Clear App Data and Cache
+```sh
+adb shell pm clear <package-name>
+```
+*Resets an app like a fresh install.*
+
+## 🔋 Battery & Performance Testing
+
+### 16. Simulate Low Battery
+```sh
+adb shell dumpsys battery set level 10
+```
+*Simulates a low battery scenario for testing.*
+
+### 17. Simulate Different Network Conditions
+```sh
+adb shell svc wifi disable
+adb shell svc wifi enable
+adb shell svc data disable
+adb shell svc data enable
+```
+*Disables/enables Wi-Fi and mobile data for testing.*
+
+### 18. Monitor CPU & RAM Usage
+```sh
+adb shell top -n 1
+```
+*Displays real-time CPU and memory usage.*
+
+## 🔑 Developer Mode & Permissions
+
+### 19. Grant/Remove App Permissions
+```sh
+adb shell pm grant <package-name> <permission>
+adb shell pm revoke <package-name> <permission>
+```
+*Manages app permissions programmatically.*
+
+### 20. Enable/Disable Developer Options
+```sh
+adb shell settings put global development_settings_enabled 1
+adb shell settings put global development_settings_enabled 0
+```
+*Turns developer options on/off.*
+
+## 🚀 Extra Useful Commands
+
+### 21. Simulate a Key Press (Back, Home, Recent Apps)
+```sh
+adb shell input keyevent KEYCODE_BACK
+adb shell input keyevent KEYCODE_HOME
+adb shell input keyevent KEYCODE_APP_SWITCH
+```
+*Simulates hardware button presses.*
+
+### 22. Send a Text Input
+```sh
+adb shell input text "HelloWorld"
+```
+*Sends text input to a field.*
+
+### 23. Simulate a Tap at (x,y) Coordinate
+```sh
+adb shell input tap 500 1000
+```
+*Mimics a screen touch at a specific location.*
+
+### 24. Reboot Device into Recovery/Bootloader Mode
+```sh
+adb reboot recovery
+adb reboot bootloader
+```
+*Restarts the device in different modes.*
+
+### 25. Factory Reset a Device
 ```sh
 adb shell recovery --wipe_data
 ```
-🔹 Performs a factory reset (⚠️ Be careful!).
+*Performs a factory reset (use with caution!).*
+
+## 🔥 Conclusion
+These ADB commands are essential for developers, testers, and even power users who want to interact with their Android devices efficiently. Let me know if you need additional commands!
 
 ---
-
-## 🔄 **Screen Mirroring & Input**
-
-### 1️⃣8️⃣ **Mirror Android Screen to PC**
-```sh
-scrcpy
-```
-🔹 Uses [scrcpy](https://github.com/Genymobile/scrcpy) for screen mirroring.
-
-### 1️⃣9️⃣ **Simulate Touch Input**
-```sh
-adb shell input tap 500 500
-```
-🔹 Simulates a touch at coordinates (500, 500).
-
-### 2️⃣0️⃣ **Simulate Key Press**
-```sh
-adb shell input keyevent 26
-```
-🔹 Simulates pressing the Power button.
-
----
-
-## 🎯 **Extra Commands**
-
-### 2️⃣1️⃣ **Turn Off Device Screen**
-```sh
-adb shell input keyevent 223
-```
-🔹 Turns the screen off (lock screen).
-
-### 2️⃣2️⃣ **Turn On Device Screen**
-```sh
-adb shell input keyevent 224
-```
-🔹 Wakes the device up.
-
-### 2️⃣3️⃣ **Copy Text to Clipboard**
-```sh
-adb shell am broadcast -a clipper.set -e text 'Hello World'
-```
-🔹 Copies text to the clipboard.
-
----
-
-## 🏁 **Conclusion**
-These ADB commands help developers, testers, and even normal users to interact with Android devices efficiently. 🚀
-
-If you found this useful, feel free to star ⭐ this repository and share it! 😊
+✨ **Tip:** You can use `adb shell dumpsys | grep "keyword"` to search for specific system info quickly.
